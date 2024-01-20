@@ -1,0 +1,73 @@
+<section
+  id="nav"
+  class="flex justify-between items-start md:items-center bg-black transition duration-200 fixed w-full z-40"
+>
+  <div
+    class="flex basis-full lg:basis-2/6 self-stretch items-center justify-between px-4 md:px-10"
+  >
+    <div
+      id="nav-header"
+      class="flex flex-col basis-full lg:basis-full w-full p-2 md:p-0 md:my-4 text-white text-base font-semibold"
+    >
+      <a href="/">
+        <!-- <img class="w-3/4 md:w-2/4" src="/images/logo.png" alt="" /> -->
+        Global Quant Ledger
+      </a>
+    </div>
+  </div>
+
+  <div id="nav-list" class="self-stretch">
+    <ul
+      id="nav-ul"
+      class="font-semibold list-none flex md:space-x-5 text-sm md:text-sm"
+    >
+      <% if (currentUser) { %>
+      <li
+        class="flex items-center text-red-500 transition-all font-normal duration-150 px-4 w-max self-center"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-5 h-5 mr-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6.75 15.75L3 12m0 0l3.75-3.75M3 12h18"
+          />
+        </svg>
+        <a href="/logout">Logout</a>
+      </li>
+      <li
+        class="flex items-center bg-rose-600 text-white shadow-md transition-all font-semibold duration-150 px-10 md:px-20 py-5 w-max"
+      >
+        <a href="/account/dashboard">My Account</a>
+      </li>
+
+      <% } else { %>
+      <li
+        class="flex items-center bg-rose-600 text-white shadow-md transition-all font-semibold duration-150 px-10 md:px-20 py-5 w-max"
+      >
+        <a href="/u/signin">Sign In</a>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-5 h-5 ml-2"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+          />
+        </svg>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</section>

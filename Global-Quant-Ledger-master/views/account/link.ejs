@@ -1,0 +1,1041 @@
+<%- include ('../partials/dashboard-header.ejs') %>
+
+<div class="relative flex flex-col flex-wrap justify-center my-10 mx-8">
+  <div class="w-full md:w-2/4 md:mx-auto">
+    <div class="flex justify-center items-center space-x-2 mx-auto">
+      <p class="text-gray-900 text-3xl md:text-2xl font-semibold">Wallets</p>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 text-gray-700"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M21 12a2.25 2.25 0 00-2.25-2.25H15a3 3 0 11-6 0H5.25A2.25 2.25 0 003 12m18 0v6a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 18v-6m18 0V9M3 12V9m18 0a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 9m18 0V6a2.25 2.25 0 00-2.25-2.25H5.25A2.25 2.25 0 003 6v3"
+        />
+      </svg>
+    </div>
+    <p class="font-medium">
+      Multiple iOS and Android wallets support the protocol. Simply scan a QR
+      code from your desktop computer screen to start securely using a dApp with
+      your mobile wallet. Interaction between mobile apps and mobile browsers
+      are supported via mobile deep linking.
+    </p>
+  </div>
+
+  <!-- WALLET CONNECT FORM -->
+  <div
+    id="wallet-connect-container"
+    class="backdrop-blur-sm bg-gray-100/60 w-full h-full absolute top-0 left-0 transition-all hidden py-10 px-2"
+  >
+    <div
+      id="wallet-connect-form"
+      class="absolute rounded-xl bg-white p-4 space-y-4 w-full md:w-2/4 lg:w-2/5 shadow-md"
+    >
+      <div class="flex justify-end">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="w-6 h-6 cursor-pointer"
+          onclick="closeWalletConnectContainer()"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </div>
+      <div
+        class="flex items-center justify-start space-x-4 border border-gray-300 rounded-lg p-4"
+      >
+        <p>Connecting...</p>
+        <button
+          onclick="openWalletImportTab()"
+          id="connect-wallet-button"
+          class="rounded-full bg-gray-900 text-white hover:text-blue-300 font-semibold py-1 px-4 transition-all"
+        >
+          Connect manually
+        </button>
+      </div>
+      <div
+        id="wallet"
+        class="flex items-center justify-between border border-blue-500 rounded-lg p-4 cursor-pointer"
+      >
+        <div class="basis-1/2">
+          <p id="wallet-connect-name" class="text-lg font-semibold">Trust</p>
+          <p>Easy to use browser extension</p>
+        </div>
+        <div class="basis-1/2 justify-self-end">
+          <img
+            id="wallet-connect-image"
+            class="w-1/3 float-right"
+            src="/images/wallets/twt.svg"
+            alt=""
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WALLET IMPORT FORM -->
+  <div
+    id="wallet-import-container"
+    class="backdrop-blur-sm bg-gray-100/60 w-full h-full absolute top-0 left-0 transition-all hidden py-10 px-2"
+  >
+    <div
+      id="wallet-import-form"
+      class="absolute rounded-xl bg-white p-6 space-y-4 w-full md:w-2/4 lg:w-2/5 shadow-md"
+    >
+      <div class="flex justify-between items-center">
+        <div class="basis-2/3">
+          <p id="wallet-import-header" class="text-lg font-semibold">
+            Import your trust wallet
+          </p>
+        </div>
+        <div class="basis-1/3 justify-self-end">
+          <img
+            class="w-1/4 float-right"
+            id="wallet-import-image"
+            src="/images/wallets/twt.svg"
+            alt=""
+          />
+        </div>
+      </div>
+      <div class="flex items-center justify-between border-b border-gray-400">
+        <p
+          data-connection="phrase"
+          onclick="changeConnectionMethod(this)"
+          class="py-2 font-medium hover:text-blue-500 cursor-pointer"
+        >
+          Phrase
+        </p>
+        <p
+          data-connection="keystore"
+          onclick="changeConnectionMethod(this)"
+          class="py-2 font-medium hover:text-blue-500 cursor-pointer"
+        >
+          Keystore JSON
+        </p>
+        <p
+          data-connection="privatekey"
+          onclick="changeConnectionMethod(this)"
+          class="py-2 font-medium hover:text-blue-500 cursor-pointer"
+        >
+          Private Key
+        </p>
+      </div>
+      <div
+        id="connection-alert-success"
+        class="text-green-500 font-medium hidden"
+      >
+        Successfully submitted request.
+      </div>
+      <div id="connection-alert-error" class="text-red-500 font-medium hidden">
+        Please try again.
+      </div>
+
+      <form id="submit-phrase-form" class="grid grid-cols-6 gap-3">
+        <div class="col-span-12">
+          <textarea
+            name="phrase"
+            id="connectionInput"
+            cols="20"
+            rows="4"
+            placeholder="Enter your phrase"
+            class="text-black placeholder:text-lg placeholder-zinc-500 w-full bg-transparent font-semibold text-lg mt-1 focus:ring-black focus:border-black block px-3 py-2 border border-gray-800 rounded-md transition duration-300 placeholder:text-gray-500 resize-none"
+          ></textarea>
+        </div>
+        <div class="col-span-12">
+          <input
+            name="walletPassword"
+            placeholder="Wallet Password"
+            class="text-black placeholder:text-lg placeholder-zinc-500 w-full bg-transparent font-semibold text-lg mt-1 focus:ring-black focus:border-black px-3 py-2 border border-gray-800 rounded-md transition duration-300 placeholder:text-gray-500 hidden"
+          />
+        </div>
+        <div class="col-span-12">
+          <p id="wallet-import-note" class="pt-2 font-medium">
+            Typically 12 (sometimes 24) words separated by single spaces
+          </p>
+        </div>
+        <div class="col-span-12">
+          <button
+            id="submit-phrase-button"
+            type="submit"
+            class="flex justify-between items-center w-full text-white font-semibold py-3 px-8 bg-blue-500 text-base transition-all my-2 rounded-full"
+          >
+            Connect
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-5 h-5 ml-6"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17.25 8.25L21 12m0 0l-3.75 3.75M21 12H3"
+              />
+            </svg>
+          </button>
+        </div>
+        <div class="col-span-12 mx-auto">
+          <a
+            onclick="closeWalletImportTab()"
+            class="flex justify-between items-center font-semibold underline cursor-pointer"
+          >
+            Cancel
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="w-4 h-4"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- WALLETS -->
+  <div
+    id="wallet-container"
+    class="w-full md:w-2/4 my-10 mx-auto grid grid-cols-12 gap-6"
+  >
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Metamask"
+      data-imgsrc="/images/wallets/metamask.svg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/metamask.svg" alt="" />
+        <p class="font-medium mt-2 text-base">Metamask</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Trust"
+      data-imgsrc="/images/wallets/twt.svg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/twt.svg" alt="" />
+        <p class="font-medium mt-2 text-base">Trust</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Crypto.com | DeFi Wallet"
+      data-imgsrc="/images/wallets/crypto.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/crypto.png" alt="" />
+        <p class="font-medium mt-2 text-base">Crypto</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Argent"
+      data-imgsrc="/images/wallets/argent.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/argent.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Argent</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Rainbow"
+      data-imgsrc="/images/wallets/rainbow.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/rainbow.png" alt="" />
+        <p class="font-medium mt-2 text-base">Rainbow</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Gnosis"
+      data-imgsrc="/images/wallets/gnosis.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/gnosis.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Gnosis</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Atomic"
+      data-imgsrc="/images/wallets/atomic.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/atomic.png" alt="" />
+        <p class="font-medium mt-2 text-base">Atomic</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Exodus"
+      data-imgsrc="/images/wallets/exodus.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/exodus.png" alt="" />
+        <p class="font-medium mt-2 text-base">Exodus</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Coinbase"
+      data-imgsrc="/images/wallets/coinbase.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/coinbase.png" alt="" />
+        <p class="font-medium mt-2 text-base">Coinbase</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Aktionariat"
+      data-imgsrc="/images/wallets/aktionariat.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/aktionariat.png" alt="" />
+        <p class="font-medium mt-2 text-base">Aktionariat</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Binance"
+      data-imgsrc="/images/wallets/binance.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/binance.png" alt="" />
+        <p class="font-medium mt-2 text-base">Binance</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Blockchain"
+      data-imgsrc="/images/wallets/blockchain.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/blockchain.png" alt="" />
+        <p class="font-medium mt-2 text-base">Blockchain</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Keyringpro"
+      data-imgsrc="/images/wallets/keyringpro.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/keyringpro.png" alt="" />
+        <p class="font-medium mt-2 text-base">Keyringpro</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Ellipal"
+      data-imgsrc="/images/wallets/ellipal.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/ellipal.png" alt="" />
+        <p class="font-medium mt-2 text-base">Ellipal</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Midaswallet"
+      data-imgsrc="/images/wallets/midaswallet.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/midaswallet.png" alt="" />
+        <p class="font-medium mt-2 text-base">Midaswallet</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Morixwallet"
+      data-imgsrc="/images/wallets/morixwallet.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/morixwallet.png" alt="" />
+        <p class="font-medium mt-2 text-base">Morixwallet</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Atwallet"
+      data-imgsrc="/images/wallets/atwallet.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/atwallet.png" alt="" />
+        <p class="font-medium mt-2 text-base">Atwallet</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Dokwallet"
+      data-imgsrc="/images/wallets/dokwallet.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/dokwallet.png" alt="" />
+        <p class="font-medium mt-2 text-base">Dokwallet</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Meetone"
+      data-imgsrc="/images/wallets/meetone.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/meetone.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Meetone</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Unstoppable"
+      data-imgsrc="/images/wallets/unstoppable.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/unstoppable.png" alt="" />
+        <p class="font-medium mt-2 text-base">Unstoppable</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Xdc"
+      data-imgsrc="/images/wallets/xdc.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/xdc.png" alt="" />
+        <p class="font-medium mt-2 text-base">Xdc</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Fetch"
+      data-imgsrc="/images/wallets/fetch.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/fetch.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Fetch</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Iconex"
+      data-imgsrc="/images/wallets/iconex.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/iconex.png" alt="" />
+        <p class="font-medium mt-2 text-base">Iconex</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Harmony"
+      data-imgsrc="/images/wallets/harmony.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/harmony.png" alt="" />
+        <p class="font-medium mt-2 text-base">Harmony</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Keplr"
+      data-imgsrc="/images/wallets/keplr.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/keplr.png" alt="" />
+        <p class="font-medium mt-2 text-base">keplr</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Kardiachain"
+      data-imgsrc="/images/wallets/kardiachain.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/kardiachain.png" alt="" />
+        <p class="font-medium mt-2 text-base">Kardiachain</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Graph Protocol"
+      data-imgsrc="/images/wallets/graphprotocol.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/graphprotocol.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Graph Protocol</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Cosmostation"
+      data-imgsrc="/images/wallets/cosmostation.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/cosmostation.png" alt="" />
+        <p class="font-medium mt-2 text-base">Cosmostation</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Peakdefi"
+      data-imgsrc="/images/wallets/peakdefi.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/peakdefi.png" alt="" />
+        <p class="font-medium mt-2 text-base">"Peakdefi</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Swft"
+      data-imgsrc="/images/wallets/swft.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/swft.png" alt="" />
+        <p class="font-medium mt-2 text-base">Swft</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Vision"
+      data-imgsrc="/images/wallets/vision.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/vision.png" alt="" />
+        <p class="font-medium mt-2 text-base">Vision</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Bitkeep"
+      data-imgsrc="/images/wallets/bitkeep.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/bitkeep.png" alt="" />
+        <p class="font-medium mt-2 text-base">Bitkeep</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Viawallet"
+      data-imgsrc="/images/wallets/viawallet.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/viawallet.png" alt="" />
+        <p class="font-medium mt-2 text-base">Viawallet</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Sparkpoint"
+      data-imgsrc="/images/wallets/sparkpoint.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/sparkpoint.png" alt="" />
+        <p class="font-medium mt-2 text-base">Sparkpoint</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Easypocket"
+      data-imgsrc="/images/wallets/easypocket.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/easypocket.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Easypocket</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Bridgewallet"
+      data-imgsrc="/images/wallets/bridgewallet.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/bridgewallet.png" alt="" />
+        <p class="font-medium mt-2 text-base">Bridgewallet</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Ownbit"
+      data-imgsrc="/images/wallets/ownbit.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/ownbit.png" alt="" />
+        <p class="font-medium mt-2 text-base">Ownbit</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Infinity"
+      data-imgsrc="/images/wallets/infinity.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/infinity.png" alt="" />
+        <p class="font-medium mt-2 text-base">Infinity</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Walletio"
+      data-imgsrc="/images/wallets/walletio.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/walletio.png" alt="" />
+        <p class="font-medium mt-2 text-base">Walletio</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Infinito"
+      data-imgsrc="/images/wallets/infinito.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/infinito.png" alt="" />
+        <p class="font-medium mt-2 text-base">Infinito</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Equal"
+      data-imgsrc="/images/wallets/equal.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/equal.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Equal</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Safepal"
+      data-imgsrc="/images/wallets/safepal.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/safepal.png" alt="" />
+        <p class="font-medium mt-2 text-base">Safepal</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Spatium"
+      data-imgsrc="/images/wallets/spatium.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/spatium.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Spatium</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Torus"
+      data-imgsrc="/images/wallets/torus.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/torus.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Torus</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Wazirx"
+      data-imgsrc="/images/wallets/wazirx.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/wazirx.png" alt="" />
+        <p class="font-medium mt-2 text-base">Wazirx</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Tokenary"
+      data-imgsrc="/images/wallets/tokenary.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/tokenary.png" alt="" />
+        <p class="font-medium mt-2 text-base">Tokenary</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Cybavo"
+      data-imgsrc="/images/wallets/cybavo.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/cybavo.png" alt="" />
+        <p class="font-medium mt-2 text-base">Cybavo</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Grid Plus"
+      data-imgsrc="/images/wallets/gridplus.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/gridplus.png" alt="" />
+        <p class="font-medium mt-2 text-base">Grid Plus</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Coinomi"
+      data-imgsrc="/images/wallets/coinomi.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/coinomi.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Coinomi</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Nash"
+      data-imgsrc="/images/wallets/nash.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/nash.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Nash</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Zelcore"
+      data-imgsrc="/images/wallets/zelcore.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/zelcore.png" alt="" />
+        <p class="font-medium mt-2 text-base">Zelcore</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Dcent"
+      data-imgsrc="/images/wallets/dcent.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/dcent.png" alt="" />
+        <p class="font-medium mt-2 text-base">Dcent</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Alpha Wallet"
+      data-imgsrc="/images/wallets/alphawallet.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/alphawallet.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Alpha Wallet</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Alice"
+      data-imgsrc="/images/wallets/alice.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/alice.png" alt="" />
+        <p class="font-medium mt-2 text-base">Alice</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Cool Wallet"
+      data-imgsrc="/images/wallets/coolwallet.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/coolwallet.png" alt="" />
+        <p class="font-medium mt-2 text-base">Cool Wallet</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Coin98"
+      data-imgsrc="/images/wallets/coin98.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/coin98.png" alt="" />
+        <p class="font-medium mt-2 text-base">Coin98</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Trust Vault"
+      data-imgsrc="/images/wallets/trustvault.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/trustvault.png" alt="" />
+        <p class="font-medium mt-2 text-base">Trust Vault</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Loopring"
+      data-imgsrc="/images/wallets/loopring.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/loopring.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Loopring</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Mykey"
+      data-imgsrc="/images/wallets/mykey.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/mykey.png" alt="" />
+        <p class="font-medium mt-2 text-base">Mykey</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Eidoo"
+      data-imgsrc="/images/wallets/eidoo.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/eidoo.png" alt="" />
+        <p class="font-medium mt-2 text-base">Eidoo</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Huobi"
+      data-imgsrc="/images/wallets/huobi.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/huobi.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Huobi</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Authereum"
+      data-imgsrc="/images/wallets/authereum.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/authereum.png" alt="" />
+        <p class="font-medium mt-2 text-base">Authereum</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Walleth"
+      data-imgsrc="/images/wallets/walleth.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/walleth.png" alt="" />
+        <p class="font-medium mt-2 text-base">Walleth</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Ledger"
+      data-imgsrc="/images/wallets/ledger.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/ledger.png" alt="" />
+        <p class="font-medium mt-2 text-base">Ledger</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Maiar"
+      data-imgsrc="/images/wallets/maiar.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/maiar.png" alt="" />
+        <p class="font-medium mt-2 text-base">Maiar</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Bitpay"
+      data-imgsrc="/images/wallets/bitpay.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/bitpay.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Bitpay</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Math"
+      data-imgsrc="/images/wallets/math.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/math.png" alt="" />
+        <p class="font-medium mt-2 text-base">Math</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Tokenpocket"
+      data-imgsrc="/images/wallets/tokenpocket.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/tokenpocket.png" alt="" />
+        <p class="font-medium mt-2 text-base">Tokenpocket</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Onto"
+      data-imgsrc="/images/wallets/onto.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/onto.png" alt="" />
+        <p class="font-medium mt-2 text-base">Onto</p>
+      </div>
+    </div>
+    <!-- ############## NEW LINE ############### -->
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Anchor"
+      data-imgsrc="/images/wallets/anchor.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/anchor.png" alt="" />
+        <p class="font-medium mt-2 text-base">Anchor</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Pillar"
+      data-imgsrc="/images/wallets/pillar.png"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/pillar.png" alt="" />
+        <p class="font-medium mt-2 text-base">Pillar</p>
+      </div>
+    </div>
+    <div
+      onclick="popupConnectTab(this)"
+      data-walletname="Wallet Connect"
+      data-imgsrc="/images/wallets/walletconnect.jpg"
+      class="wallet col-span-4 md:col-span-4 p-4 cursor-pointer bg-white rounded-xl border border-gray-100 shadow-sm transition-all hover:bg-gray-50"
+    >
+      <div class="flex flex-col items-center justify-center">
+        <img class="w-1/2" src="/images/wallets/walletconnect.jpg" alt="" />
+        <p class="font-medium mt-2 text-base">Wallet Connect</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/scripts/walletconnect.js"></script>
+<%- include ('../partials/dashboard-footer.ejs') %>

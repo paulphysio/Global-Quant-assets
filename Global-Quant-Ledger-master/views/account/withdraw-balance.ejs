@@ -1,0 +1,85 @@
+<%- include ('../partials/dashboard-header.ejs') %>
+
+<div class="flex flex-col flex-wrap justify-center md:flex-row my-10">
+  <form
+    class="p-2 overflow-hidden sm:rounded-md basis-2/4"
+    action="/account/withdraw"
+    method="POST"
+  >
+    <div class="flex items-center space-x-2 mx-4">
+      <p class="text-gray-900 text-3xl md:text-2xl font-semibold"></p>
+    </div>
+
+    <div class="flex items-center space-x-2 mx-4">
+      <p class="text-gray-900 text-3xl md:text-2xl font-semibold">
+        Withdraw Balance
+      </p>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke-width="1.5"
+        stroke="currentColor"
+        class="w-6 h-6 text-gray-700"
+      >
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25"
+        />
+      </svg>
+    </div>
+
+    <div>
+      <div class="px-4 py-5">
+        <div class="grid grid-cols-6 gap-4 md:gap-6">
+          <div class="grid grid-cols-12 gap-x-4 gap-y-4 col-span-6">
+            <div class="col-span-12">
+              <input
+                type="number"
+                name="amount"
+                id="amount"
+                placeholder="Enter amount"
+                class="text-black placeholder:text-lg placeholder-zinc-500 w-full bg-transparent font-semibold text-lg mt-1 focus:ring-black focus:border-black block px-3 py-2 border border-gray-800 rounded-md transition duration-300 placeholder:text-gray-500"
+              />
+            </div>
+            <div class="col-span-12">
+              <select
+                class="text-black placeholder:text-lg placeholder-zinc-500 w-full bg-transparent font-semibold text-lg mt-1 focus:ring-black focus:border-black block px-3 py-2 border border-gray-800 rounded-md transition duration-300 placeholder:text-gray-500"
+                name="wallet"
+                id="wallet"
+              >
+                <option value="btc">Bitcoin</option>
+                <option value="eth">Eth</option>
+                <option value="xlm">XLM</option>
+                <option value="xrp">XRP</option>
+                <option value="xdc">XDC</option>
+              </select>
+            </div>
+            <div class="col-span-12">
+              <input
+                type="text"
+                name="address"
+                id="address"
+                placeholder="Enter Wallet Address"
+                class="text-black placeholder:text-lg placeholder-zinc-500 w-full bg-transparent font-semibold text-lg mt-1 focus:ring-black focus:border-black block px-3 py-2 border border-gray-800 rounded-md transition duration-300 placeholder:text-gray-500"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-4">
+        <button
+          id="submit-btn"
+          type="submit"
+          class="flex justify-between items-center w-full text-white font-semibold py-3 px-8 bg-black text-base transition-all my-2 rounded-full"
+        >
+          Continue
+        </button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<%- include ('../partials/dashboard-footer.ejs') %>
