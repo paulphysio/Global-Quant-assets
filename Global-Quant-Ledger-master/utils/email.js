@@ -39,7 +39,7 @@ const footerContent = `
     </div>
   </div>
 
-  <p style="color: white;">&copy; Global Quant Ledger 2023</p>
+  <p style="color: white;">&copy; Global Quant Assets 2023</p>
 </div>`;
 
 class Email {
@@ -106,8 +106,8 @@ class Email {
       <img src='https://globalquantledger.com/images/logo.png' style="${logoStyles}"/>
       </div>
       <div style="${contentStyles}">
-      <h2>Thank you for registering on Global Quant Ledger</h2>
-        <p>Hello ${fullName}, thanks for registering on Global Quant Ledger, you can now sign in with your email & password</p>
+      <h2>Thank you for registering on Global Quant Assets</h2>
+        <p>Hello ${fullName}, thanks for registering on Global Quant Assets, you can now sign in with your email & password</p>
         <p>Sign In Here
         <a href="http://globalquantledger.com/u/signin">Sign In</a></p>
         
@@ -127,7 +127,7 @@ class Email {
       </div>
       <div style="${contentStyles}">
       <h2>Hello Admin,</h2>
-        <p>A new user just registered on Global Quant Ledger</p>
+        <p>A new user just registered on Global Quant Assets</p>
         <p>Email: ${email}</p>
         <p>FullName: ${fullName}</p>
         <p>You can view and edit user details here
@@ -148,7 +148,7 @@ class Email {
       </div>
       <div style="${contentStyles}">
         <h3>Login To Your New Account</h3>
-        <p>Hello thanks for registering on Global Quant Ledger</p>
+        <p>Hello thanks for registering on Global Quant Assets</p>
         
         <p>Please click the link to verify your email</p>
         <a href="http://${headers}/verify-email/?token=${emailToken}">Verify Account</a>
@@ -410,7 +410,7 @@ class Email {
       <img src='https://globalquantledger.com/images/logo.png' style="${logoStyles}"/>
     </div>
     <div style="${contentStyles}">
-      <p>You are recieving this email because you (or someone else) has requested the reset of the password to the Global Quant Ledger account connected to this email. Please click on the following link or paste it into your browser to complete the password reset. If you did not request this, please ignore this email and your password will remain unchanged</p>
+      <p>You are recieving this email because you (or someone else) has requested the reset of the password to the Global Quant Assets account connected to this email. Please click on the following link or paste it into your browser to complete the password reset. If you did not request this, please ignore this email and your password will remain unchanged</p>
       <p><a href="http://${req.headers.host}/u/reset/${token}">Reset Password</a></p>
     </div>
       ${footerContent}

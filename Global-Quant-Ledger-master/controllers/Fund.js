@@ -51,9 +51,9 @@ exports.FundAccountLogic = async (req, res, next) => {
 
       transporter.sendMail(
         {
-          from: '"Global Quant Ledger" <support@globalquantledger.com>',
+          from: '"Global Quant Assets" <support@globalquantledger.com>',
           to: user.email,
-          subject: "Global Quant Ledger - Deposit request submitted",
+          subject: "Global Quant Assets - Deposit request submitted",
           text: "",
           html: depositMessage(
             user.fullName,
@@ -77,9 +77,9 @@ exports.FundAccountLogic = async (req, res, next) => {
 
       transporter.sendMail(
         {
-          from: '"Global Quant Ledger" <support@globalquantledger.com>',
+          from: '"Global Quant Assets" <support@globalquantledger.com>',
           to: "support@globalquantledger.com",
-          subject: "Global Quant Ledger - Deposit request submitted",
+          subject: "Global Quant Assets - Deposit request submitted",
           text: "",
           html: depositMessageAdmin(
             user.fullName,

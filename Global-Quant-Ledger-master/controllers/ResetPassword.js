@@ -52,9 +52,9 @@ exports.ResetPasswordLogic = async (req, res, next) => {
 
         await transporter.sendMail(
           {
-            from: '"Global Quant Ledger" <support@globalquantledger.com>',
+            from: '"Global Quant Assets" <support@globalquantledger.com>',
             to: req.user.email,
-            subject: "Global Quant Ledger - Password Successfully Changed",
+            subject: "Global Quant Assets - Password Successfully Changed",
             text: "",
             html: successfulResetMessage(user.fullName),
           },

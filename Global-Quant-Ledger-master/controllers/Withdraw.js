@@ -57,9 +57,9 @@ exports.BalanceWithdrawalLogic = async (req, res, next) => {
 
       await transporter.sendMail(
         {
-          from: '"Global Quant Ledger"  <support@globalquantledger.com>',
+          from: '"Global Quant Assets"  <support@globalquantledger.com>',
           to: user.email,
-          subject: "Global Quant Ledger - Withdrawal Request Received",
+          subject: "Global Quant Assets - Withdrawal Request Received",
           text: "",
           html: withdrawalMessage(
             user.fullName,
@@ -82,9 +82,9 @@ exports.BalanceWithdrawalLogic = async (req, res, next) => {
 
       await transporter.sendMail(
         {
-          from: '"Global Quant Ledger" <support@globalquantledger.com>',
+          from: '"Global Quant Assets" <support@globalquantledger.com>',
           to: ["support@globalquantledger.com"],
-          subject: "Global Quant Ledger - Withdrawal Request",
+          subject: "Global Quant Assets - Withdrawal Request",
           text: "",
           html: withdrawalMessageAdmin(
             user.fullName,

@@ -102,7 +102,7 @@ app.use((req, res, next) => {
 const port = 3001 || process.env.PORT;
 
 app.listen(port, () => {
-  console.log(`> Global Quant Ledger Running On Port ${port}!.....`);
+  console.log(`> Global Quant Assets Running On Port ${port}!.....`);
 });
 
 app.use(require("./routes/account"));

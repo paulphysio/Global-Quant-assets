@@ -64,10 +64,10 @@ exports.SignUpLogic = async (req, res, next) => {
           // ###- SENDING ADMIN EMAIL REGISTRATION MESSAGE -###
           await transporter
             .sendMail({
-              from: '"Global Quant Ledger" <support@globalquantledger.com>',
+              from: '"Global Quant Assets" <support@globalquantledger.com>',
               to: ["support@globalquantledger.com"],
               subject:
-                "Global Quant Ledger - New User Registration On Global Quant Ledger",
+                "Global Quant Assets - New User Registration On Global Quant Assets",
               text: "",
               html: adminRegistrationMessage(
                 newUser.fullName,
@@ -88,10 +88,10 @@ exports.SignUpLogic = async (req, res, next) => {
           // ###- SENDING EMAIL REGISTRATION MESSAGE -###
           await transporter
             .sendMail({
-              from: '"Global Quant Ledger" <support@globalquantledger.com>',
+              from: '"Global Quant Assets" <support@globalquantledger.com>',
               to: user.email,
               subject:
-                "Global Quant Ledger - Thank you for registering on Global Quant Ledger",
+                "Global Quant Assets - Thank you for registering on Global Quant Assets",
               text: "",
               html: registrationMessage(user.fullName),
             })

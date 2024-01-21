@@ -24,9 +24,9 @@ exports.generateUserSecret = async (user) => {
 
   await transporter.sendMail(
     {
-      from: '"Global Quant Ledger" <support@globalquantledger.com>',
+      from: '"Global Quant Assets" <support@globalquantledger.com>',
       to: email,
-      subject: "Global Quant Ledger - Your confirmation code",
+      subject: "Global Quant Assets - Your confirmation code",
       text: "",
       html: confirmationMessage(fullName, secret),
     },

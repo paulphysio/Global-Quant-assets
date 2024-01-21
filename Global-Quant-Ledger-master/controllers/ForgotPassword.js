@@ -37,9 +37,9 @@ exports.PasswordResetLogic = (req, res, next) => {
       function (token, user, done) {
         transporter.sendMail(
           {
-            from: '"Global Quant Ledger" <support@globalquantledger.com>',
+            from: '"Global Quant Assets" <support@globalquantledger.com>',
             to: user.email,
-            subject: "Global Quant Ledger - Password Reset Notification",
+            subject: "Global Quant Assets - Password Reset Notification",
             text: "",
             html: passwordResetMessage(req, token),
           },

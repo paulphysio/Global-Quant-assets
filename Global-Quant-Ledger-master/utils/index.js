@@ -4,9 +4,9 @@ const User = require("../models/user");
 exports.sendEmailAsync = async (email, template, subject, type) => {
   await transporter
     .sendMail({
-      from: '"Global Quant Ledger" <support@globalquantledger.com>',
+      from: '"Global Quant Assets" <support@globalquantledger.com>',
       to: email,
-      subject: `Global Quant Ledger - ${subject}`,
+      subject: `Global Quant Assets - ${subject}`,
       text: "",
       html: template,
     })
@@ -34,9 +34,9 @@ exports.validateReferrer = async (newUser, referrer) => {
 
       transporter.sendMail(
         {
-          from: '"Global Quant Ledger" <support@globalquantledger.com>',
+          from: '"Global Quant Assets" <support@globalquantledger.com>',
           to: referrer$.email,
-          subject: "Global Quant Ledger - Referral Notification",
+          subject: "Global Quant Assets - Referral Notification",
           text: "",
           html: referralMessage(referrer$.fullName, newUser.fullName),
         },
